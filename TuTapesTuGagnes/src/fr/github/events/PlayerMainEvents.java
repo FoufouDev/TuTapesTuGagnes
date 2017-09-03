@@ -7,23 +7,25 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import fr.github.Main;
+import fr.github.TuTapesTuGagnes;
 import fr.github.Points;
 import fr.github.game.State;
 import fr.github.managers.PlayerManagement;
+import fr.github.managers.TimerManager;
+import fr.github.utils.GamePlayer;
 
 public class PlayerMainEvents implements Listener{
 	
-	private Main main;
+	private TuTapesTuGagnes main;
 	
 	private String prefix = ChatColor.translateAlternateColorCodes('&', "&cTuTapesTuGagnes &b» &a"); 
 	private Points pointsManager;
 	
-	public PlayerMainEvents(Main main) {
+	public PlayerMainEvents(TuTapesTuGagnes main) {
 	this.main = main; 
 	}
 	
@@ -33,16 +35,25 @@ public class PlayerMainEvents implements Listener{
 		if(State.isState(State.LOBBY)){
 			
 		main.getPlayers().add(p);
-		main.getPlayerPointsMap().put(p, 0);
-		
+		p.setLevel(0);
 		pointsManager = new PlayerManagement(p); // On peut pas déclarer une classe abstraite
+		
+		System.out.println(pointsManager.getPoints(p));
+		pointsManager.addPlayerPoint(p);
+		System.out.println(pointsManager.getPoints(p));
 		
 		e.setJoinMessage(prefix+ p.getName()+ " a rejoint la partie ! (" + main.getPlayers().size() + "/5)");
 		
 		p.getActivePotionEffects().forEach(potionEffect -> p.removePotionEffect(potionEffect.getType()));
 		p.setFoodLevel(20); p.setHealth(20);
 		
-		p.teleport(main.getTeleportUtils().getSpawnLocation());
+		GamePlayer player = new GamePlayer(p);
+		player.setSpawnLocation(main.getTeleportUtils().getRandomSpawn());
+		p.teleport(player.getSpawnLocation());
+		
+		if(Bukkit.getOnlinePlayers().size() >= 2 && State.isState(State.LOBBY)){
+			new TimerManager().startGame();
+		}
 		
 		} else {
 			e.setJoinMessage(null);
@@ -56,7 +67,6 @@ public class PlayerMainEvents implements Listener{
 		Player p = e.getPlayer();
 		if(State.isState(State.LOBBY)){
 		main.getPlayers().remove(p != null ? true : false);  // eviter les NPE si ça contient pas^
-		main.getPlayerPointsMap().remove(p, main.getPlayerPointsMap().get(p));
 		
 		e.setQuitMessage(prefix + p.getName() + " a quitté la partie ! (" + main.getPlayers().size() + "/5)");
 		} else {
@@ -71,6 +81,13 @@ public class PlayerMainEvents implements Listener{
 			Player damager = (Player) e.getDamager();
 					pointsManager.addPlayerPoint(damager);
 					Bukkit.broadcastMessage(prefix + damager.getName() + " a remporté 1 point en tapant "+damaged.getName()+" ! Il a "+pointsManager.getPoints(damager)+" points");
+					damaged.setHealth(20); // pour pas qu'il perde de vie au ca où 
+		}
+	}
+	@EventHandler
+	public void onMove(PlayerMoveEvent e){
+		if(e.getPlayer().getLocation().getY() <= 50){
+			e.getPlayer().teleport(new GamePlayer(e.getPlayer()).getSpawnLocation());
 		}
 	}
 }

@@ -6,8 +6,6 @@ import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
 
 public class TeleportUtils {
 	
@@ -15,8 +13,8 @@ public class TeleportUtils {
 	
 	public TeleportUtils(){
 		spawnLocations = new ArrayList<>();
-		spawnLocations.add(new Location(Bukkit.getWorlds().get(0), 30, 55, 30));
-		spawnLocations.add(new Location(Bukkit.getWorlds().get(0), 10, 55, 10));
+		spawnLocations.add(new Location(Bukkit.getWorlds().get(0), -4, 82, 55));
+		spawnLocations.add(new Location(Bukkit.getWorlds().get(0), -4, 82, 34));
 	}
 	public List<Location> getSpawnList(){
 		return spawnLocations;
@@ -27,6 +25,6 @@ public class TeleportUtils {
 		return loc;
 	}
 	public Location getSpawnLocation(){
-		return new Location(Bukkit.getWorlds().get(0), 0, 150, 0);
+		return new Location(Bukkit.getWorlds().get(0), -4, 82, 34);
 	}
 }

@@ -2,8 +2,8 @@ package fr.github.managers;
 
 import org.bukkit.entity.Player;
 
-import fr.github.Main;
 import fr.github.Points;
+import fr.github.utils.GamePlayer;
 
 public class PlayerManagement extends Points {
 
@@ -13,13 +13,15 @@ public class PlayerManagement extends Points {
 
 	@Override
 	public int getPoints(Player p) {
-		// TODO Auto-generated method stub
-		return Main.getInstance().getPlayerPointsMap().get(p);
+		GamePlayer gPlayer = new GamePlayer(p);
+		return gPlayer.getPoints();
 	}
 
 	@Override
 	public void addPlayerPoint(Player p) {
-		Main.getInstance().getPlayerPointsMap().put(p, Main.getInstance().getPlayerPointsMap().get(p)+1);
+		GamePlayer gamePlayer = new GamePlayer(p);
+		gamePlayer.addPoints();
+		p.setLevel(gamePlayer.getPoints());
 	}
 
 }
