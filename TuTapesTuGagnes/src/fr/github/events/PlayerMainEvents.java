@@ -43,7 +43,7 @@ public class PlayerMainEvents implements Listener{
 		p.getActivePotionEffects().forEach(potionEffect -> p.removePotionEffect(potionEffect.getType()));
 		p.setFoodLevel(20); p.setHealth(20);
 		
-		
+		p.teleport(main.getTeleportUtils().getSpawnLocation());
 		
 		if(Bukkit.getOnlinePlayers().size() >= 2 && State.isState(State.LOBBY)){
 			
