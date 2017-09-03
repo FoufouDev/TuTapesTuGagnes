@@ -38,20 +38,19 @@ public class PlayerMainEvents implements Listener{
 		p.setLevel(0);
 		pointsManager = new PlayerManagement(p); // On peut pas déclarer une classe abstraite
 		
-		System.out.println(pointsManager.getPoints(p));
-		pointsManager.addPlayerPoint(p);
-		System.out.println(pointsManager.getPoints(p));
-		
 		e.setJoinMessage(prefix+ p.getName()+ " a rejoint la partie ! (" + main.getPlayers().size() + "/5)");
 		
 		p.getActivePotionEffects().forEach(potionEffect -> p.removePotionEffect(potionEffect.getType()));
 		p.setFoodLevel(20); p.setHealth(20);
 		
-		GamePlayer player = new GamePlayer(p);
-		player.setSpawnLocation(main.getTeleportUtils().getRandomSpawn());
-		p.teleport(player.getSpawnLocation());
+		
 		
 		if(Bukkit.getOnlinePlayers().size() >= 2 && State.isState(State.LOBBY)){
+			
+			GamePlayer player = new GamePlayer(p);
+			player.setSpawnLocation(main.getTeleportUtils().getRandomSpawn());
+			p.teleport(player.getSpawnLocation());
+			
 			new TimerManager().startGame();
 		}
 		
